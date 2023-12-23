@@ -20,13 +20,13 @@ namespace MaskTheDead.Components
         {
             if (ragdoll.isHeld || ragdoll.isHeldByEnemy)
             {
-                Plugin.TheLogger.LogInfo("Cant attempt possesion of held ragdoll...");
+                Plugin.TheLogger.LogInfo("Cant attempt possession of held ragdoll...");
                 return false;
             }
 
             if (ragdoll.isInShipRoom)
             {
-                Plugin.TheLogger.LogInfo("Cant attempt possesion of body in ship");
+                Plugin.TheLogger.LogInfo("Cant attempt possession of body in ship");
                 return false;
             }
 
@@ -159,7 +159,7 @@ namespace MaskTheDead.Components
             }
             else
             {
-                Plugin.TheLogger.LogWarning("Ragdoll was deleted, stopping repossesion retry!");
+                Plugin.TheLogger.LogWarning("Ragdoll was deleted, stopping repossession retry!");
             }
         }
 
@@ -211,7 +211,7 @@ namespace MaskTheDead.Components
             var item = gameObject.GetComponent<HauntedMaskItem>();
             if (item == null)
             {
-                Plugin.TheLogger.LogFatal("Could not find mask item component, aborting possesion!");
+                Plugin.TheLogger.LogFatal("Could not find mask item component, aborting possession!");
                 return;
             }
 
