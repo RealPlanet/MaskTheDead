@@ -44,9 +44,11 @@ namespace MaskTheDead.Components
 
         void Update()
         {
-            if(_MaskComponent == null)
+            if(_MaskComponent == null || _Collider == null)
             {
-                NetworkManager.Destroy(this);
+                Plugin.TheLogger.LogWarning("Mask or collider is null, deleting component!");
+                this.NetworkObject.Despawn();
+                Destroy(this);
                 return;
             }
 

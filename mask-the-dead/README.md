@@ -11,6 +11,9 @@ By default:
  * Possession chance: 100%
  * Possession range: 10 units
 
+### **1.0.2**
+- Cleanup custom component if trigger is deleted after a player wears mask and is possessed by it
+
 ### **1.0.1**
 - Fixed some client replication issues
 - Known Issues: Ship map replication sometimes does not work
