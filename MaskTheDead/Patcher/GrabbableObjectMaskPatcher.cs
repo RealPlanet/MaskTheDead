@@ -28,11 +28,10 @@ namespace MaskTheDead.Patchers
                 Plugin.TheLogger.LogInfo("Avoding patch for non hosts");
                 return true;
             }
-
+            
             Plugin.TheLogger.LogInfo("Adding mask watcher to haunted mask!");
             // Let the host handle the possession, then let the RPC handle the clients
-            mask.gameObject.AddComponent<MaskTheDeadComponent>();
-           
+            mask.gameObject.AddComponent<MaskTheDeadComponent>();      
             return true;
         }
     }    

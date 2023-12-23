@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameNetcodeStuff;
+using System.Collections;
 using System.Collections.Generic;
 using System.Timers;
 using Unity.Netcode;
@@ -215,12 +216,38 @@ namespace MaskTheDead.Components
             }
 
             Plugin.TheLogger.LogInfo("Spawning mimic");
-            item.playerHeldBy = ragdoll.ragdoll.playerScript;
-            item.ChangeOwnershipOfProp(ragdoll.ragdoll.playerScript.actualClientId);
-            item.CreateMimicServerRpc(ragdoll.isInFactory, ragdoll.ragdoll.spawnPosition);
+            if(ragdoll.ragdoll.playerScript == null)
+            {
+                Plugin.TheLogger.LogFatal("Ragdoll's player script is null, aborting mimic spawn!");
+                return;
+            }
+
+            //ragdoll.ragdoll.playerScript.deadBody = null;
+            // Set the ownership of both to the server so we can do some RPC magic
+            item.NetworkObject.RemoveOwnership();
+            ragdoll.NetworkObject.RemoveOwnership();
+
+            SetPreviouslyHeldByOf(item, ragdoll.ragdoll.playerScript);
+            //item.playerHeldBy = null;
+            item.CreateMimicServerRpc(ragdoll.isInFactory, ragdoll.ragdoll.transform.position);
+
+            //// Despawn network objects!
             item.NetworkObject.Despawn();
-            // Unsure if needed, mask code should already take care of it
+            Destroy(item);
+            Destroy(item.radarIcon.gameObject);
+
             ragdoll.NetworkObject.Despawn();
+            Destroy(ragdoll);
+        }
+
+        private void SetPreviouslyHeldByOf(HauntedMaskItem item, PlayerControllerB c)
+        {
+            // Hacky way to ensure the mimic can safely spawn
+            // otherwise we get a nre
+            var prop = item.GetType().GetField("previousPlayerHeldBy",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            prop.SetValue(item, c);
+            Plugin.TheLogger.LogInfo("Set private field previousPlayerHeldBy");
         }
         #endregion
     }
