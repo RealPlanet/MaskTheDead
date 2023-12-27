@@ -11,6 +11,12 @@ By default:
  * Possession chance: 100%
  * Possession range: 10 units
 
+## **1.0.4**
+- Updated changelog with latest information
+
+## **1.0.3**
+- Fixed mask disappearing if players attempted to wear it
+
 ### **1.0.2**
 - Cleanup custom component if trigger is deleted after a player wears mask and is possessed by it
 
