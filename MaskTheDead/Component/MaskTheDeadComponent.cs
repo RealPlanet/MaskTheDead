@@ -44,11 +44,9 @@ namespace MaskTheDead.Components
 
         void Update()
         {
-            if(_MaskComponent == null || _Collider == null)
+            if(ShouldDispose())
             {
-                Plugin.TheLogger.LogWarning("Mask or collider is null, deleting component!");
-                this.NetworkObject.Despawn();
-                Destroy(this);
+                Dispose();
                 return;
             }
 
@@ -72,13 +70,19 @@ namespace MaskTheDead.Components
 
         public override void OnNetworkDespawn()
         {
-            Plugin.TheLogger.LogInfo("Network despawn, clearning repossession component!");
+            Plugin.TheLogger.LogInfo("Network despawn, cleaning repossession component!");
             base.OnNetworkDespawn();
             CleanupCoroutines();
         }
 
         void OnTriggerEnter(Collider other)
         {
+            if(ShouldDispose())
+            {
+                Dispose();
+                return;
+            }
+
             RagdollGrabbableObject ragdoll = GetColliderRagdoll(other);
             if (ragdoll == null)
             {
@@ -234,12 +238,21 @@ namespace MaskTheDead.Components
             item.CreateMimicServerRpc(ragdoll.isInFactory, ragdoll.ragdoll.transform.position);
 
             //// Despawn network objects!
-            item.NetworkObject.Despawn();
-            Destroy(item);
-            Destroy(item.radarIcon.gameObject);
+            if(item != null)
+            {
+                item.NetworkObject.Despawn();
+                Destroy(item);
+                if(item.radarIcon != null && item.radarIcon.gameObject != null)
+                {
+                    Destroy(item.radarIcon.gameObject);
+                }
+            }
 
-            ragdoll.NetworkObject.Despawn();
-            Destroy(ragdoll);
+            if (ragdoll != null)
+            {
+                ragdoll.NetworkObject.Despawn();
+                Destroy(ragdoll);
+            }
         }
 
         private void SetPreviouslyHeldByOf(HauntedMaskItem item, PlayerControllerB c)
@@ -251,6 +264,41 @@ namespace MaskTheDead.Components
             prop.SetValue(item, c);
             Plugin.TheLogger.LogInfo("Set private field previousPlayerHeldBy");
         }
+
+        private bool HasFinishedAttaching(HauntedMaskItem item)
+        {
+            var prop = item.GetType().GetField("finishedAttaching",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            return (bool)prop.GetValue(item);
+        }
         #endregion
+    
+        private bool ShouldDispose()
+        {
+            if (HasFinishedAttaching(_MaskComponent))
+            {
+                Plugin.TheLogger.LogInfo(">> MASK HAS ATTACHED ITSELF TO SOMEONE <<");
+                Plugin.TheLogger.LogInfo(">> KILLING MASKTHEDEAD COMPONENT       <<");
+                return true;
+            }
+
+            if (_MaskComponent == null || _Collider == null)
+            {
+                Plugin.TheLogger.LogWarning(">> MASK OR COLLIDER IS NULL <<");
+                Plugin.TheLogger.LogInfo(">> KILLING MASKTHEDEAD COMPONENT       <<");
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private void Dispose()
+        {
+            //this.NetworkObject.Despawn();
+            Plugin.TheLogger.LogInfo(">> DISPOSING <<");
+            Destroy(this);
+        }
     }
 }
