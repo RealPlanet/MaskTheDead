@@ -11,6 +11,9 @@ By default:
  * Possession chance: 100%
  * Possession range: 10 units
 
+### **1.0.5**
+- Prevent mask from possessing bodies if the mask is on the ship
+
 ### **1.0.4**
 - Updated changelog with latest information
 

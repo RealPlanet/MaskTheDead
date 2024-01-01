@@ -1,4 +1,4 @@
-﻿using GameNetcodeStuff;
+﻿    using GameNetcodeStuff;
 using System.Collections;
 using System.Collections.Generic;
 using System.Timers;
@@ -51,7 +51,11 @@ namespace MaskTheDead.Components
             }
 
             // As soon as the mask is being held we stop attempting to possess dead bodies
-            if(_MaskComponent.isHeldByEnemy || _MaskComponent.isHeld)
+            var maskIsHeld = _MaskComponent.isHeldByEnemy || _MaskComponent.isHeld;
+            var maskIsInShip = _MaskComponent.isInShipRoom;
+            var maskIsInElevator = _MaskComponent.isInElevator;
+
+            if (maskIsHeld || maskIsInShip || maskIsInElevator)
             {
                 _Collider.enabled = false;
                 CleanupCoroutines();
@@ -240,7 +244,7 @@ namespace MaskTheDead.Components
             //// Despawn network objects!
             if(item != null)
             {
-                item.NetworkObject.Despawn();
+                item.NetworkObject.Despawn(); 
                 Destroy(item);
                 if(item.radarIcon != null && item.radarIcon.gameObject != null)
                 {
