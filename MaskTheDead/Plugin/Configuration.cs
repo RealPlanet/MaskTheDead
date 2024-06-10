@@ -6,10 +6,12 @@ namespace MaskTheDead
     {
         public float PossesionChance => configPossessionChance.Value;
         public int RetryPossesionTime => configRetryPossesionTime.Value;
+        public int PossessionDelayTime => configPossessionDelayTime.Value;
         public int MaskPossessionRange => configMaskPossessionRange.Value;
         public int RetryPossesionMinTime => 10000;
 
         private ConfigEntry<float> configPossessionChance;
+        private ConfigEntry<int> configPossessionDelayTime;
         private ConfigEntry<int> configRetryPossesionTime;
         private ConfigEntry<int> configMaskPossessionRange;
         private ConfigFile File;
@@ -31,6 +33,12 @@ namespace MaskTheDead
                  "MaskPossessionRange",
                  10,
                  $"Range, in units, of the mask repossession trigger. Only bodies close enough will be considered for repossessions!");
+
+            configPossessionDelayTime = File.Bind("General",
+                 "PossessionDelayTime",
+                 0,
+                 $"Time in milliseconds before the body is actually possessed");
+
         }
     }
 }

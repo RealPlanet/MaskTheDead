@@ -189,8 +189,22 @@ namespace MaskTheDead.Components
         #endregion
 
         #region Possession
-        private void AttemptPossesion(RagdollGrabbableObject ragdoll)
+        private IEnumerator AttemptPossesion(RagdollGrabbableObject ragdoll)
         {
+            // Save it early, you never know if it gets nulled in this time
+            GameObject originalGameobject = ragdoll.gameObject;
+            if(Plugin.TheConfiguration.PossessionDelayTime > 0)
+            {
+                yield return new WaitForSeconds(Plugin.TheConfiguration.PossessionDelayTime / 1000);
+                yield return new WaitForEndOfFrame(); // Wait frame just in case this routine was stopped!
+            }
+
+            if (!_NearbyBodies.ContainsKey(ragdoll.gameObject))
+            {
+                // Early exit, we are no longer nearby a body
+                yield break;
+            }
+
             if (!PossessionChancePassed)
             {
                 Plugin.TheLogger.LogInfo("Chance failed, will not possess body");
@@ -207,7 +221,8 @@ namespace MaskTheDead.Components
                     Coroutine c = StartCoroutine(nameof(RepossessionCoroutine), ragdoll);
                     _NearbyBodies[ragdoll.gameObject] = c;
                 }
-                return;
+
+                yield break;
             }
 
             Plugin.TheLogger.LogInfo("Chance for possession OK");
