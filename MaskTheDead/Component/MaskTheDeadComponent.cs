@@ -1,7 +1,6 @@
-﻿    using GameNetcodeStuff;
+﻿using GameNetcodeStuff;
 using System.Collections;
 using System.Collections.Generic;
-using System.Timers;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -292,6 +291,12 @@ namespace MaskTheDead.Components
                 Plugin.TheLogger.LogWarning(">> MASK OR COLLIDER IS NULL <<");
                 Plugin.TheLogger.LogInfo(">> KILLING MASKTHEDEAD COMPONENT       <<");
 
+                return true;
+            }
+
+            // Disable while visiting company!
+            if(StartOfRound.Instance.currentLevel.levelID == 3)
+            {
                 return true;
             }
 
